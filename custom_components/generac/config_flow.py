@@ -106,12 +106,17 @@ class GeneracFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
                     **(entry.options or {}),
                     CONF_SCAN_INTERVAL: int(scan_interval),
                 }
-                return self.async_update_reload_and_abort(
+                # Update only — the update listener registered in
+                # async_setup_entry will reload the entry exactly once.
+                # Calling async_update_reload_and_abort here would
+                # double-reload (helper schedules + listener fires) and
+                # race the unload, surfacing as "failed to unload".
+                self.hass.config_entries.async_update_entry(
                     entry,
                     data={**entry.data, **entry_data},
                     options=new_options,
-                    reason="Reconfigure Successful",
                 )
+                return self.async_abort(reason="Reconfigure Successful")
             errors["base"] = error
 
         default_email = entry.data.get(CONF_USERNAME, "") if entry else ""
@@ -161,10 +166,13 @@ class GeneracFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
 
             entry_data, error = await self._try_login(email, password)
             if error is None:
+                # Update only — the update listener registered in
+                # async_setup_entry handles the reload. An explicit
+                # async_reload here would race the listener-driven
+                # reload and surface as "failed to unload".
                 self.hass.config_entries.async_update_entry(
                     entry, data={**entry.data, **entry_data}
                 )
-                await self.hass.config_entries.async_reload(entry.entry_id)
                 return self.async_abort(reason="reauth_successful")
             errors["base"] = error
 

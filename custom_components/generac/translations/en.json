@@ -14,7 +14,8 @@
         "description": "Re-enter your Mobile Link credentials.",
         "data": {
           "username": "Email",
-          "password": "Password"
+          "password": "Password",
+          "scan_interval": "Cloud polling interval (seconds)"
         }
       },
       "reauth_confirm": {
@@ -41,7 +42,7 @@
         "data": {
           "binary_sensor": "Binary sensors enabled",
           "image": "Image enabled",
-          "scan_interval": "Polling interval (seconds)",
+          "scan_interval": "Cloud polling interval (seconds)",
           "sensor": "Non-binary sensors enabled",
           "switch": "Switch enabled",
           "weather": "Weather sensor enabled"
