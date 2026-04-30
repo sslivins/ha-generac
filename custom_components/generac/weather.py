@@ -1,5 +1,4 @@
 """Weather platform for generac."""
-
 from typing import Type
 
 from homeassistant.components.weather import WeatherEntity

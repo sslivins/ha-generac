@@ -1,8 +1,12 @@
 """Test generac setup process."""
-
 from unittest.mock import patch
 
 import pytest
+from homeassistant.core import HomeAssistant
+from homeassistant.exceptions import ConfigEntryAuthFailed
+from homeassistant.exceptions import ConfigEntryNotReady
+from pytest_homeassistant_custom_component.common import MockConfigEntry
+
 from custom_components.generac import async_reload_entry
 from custom_components.generac import async_setup_entry
 from custom_components.generac import async_unload_entry
@@ -11,10 +15,6 @@ from custom_components.generac.const import CONF_DPOP_PEM
 from custom_components.generac.const import CONF_REFRESH_TOKEN
 from custom_components.generac.const import CONF_USERNAME
 from custom_components.generac.const import DOMAIN
-from homeassistant.core import HomeAssistant
-from homeassistant.exceptions import ConfigEntryAuthFailed
-from homeassistant.exceptions import ConfigEntryNotReady
-from pytest_homeassistant_custom_component.common import MockConfigEntry
 
 
 def _make_mock_config():
