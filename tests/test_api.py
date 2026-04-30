@@ -5,7 +5,6 @@ from unittest.mock import AsyncMock
 from unittest.mock import MagicMock
 
 import pytest
-
 from custom_components.generac.api import GeneracApiClient
 from custom_components.generac.api import InvalidCredentialsException
 from custom_components.generac.api import SessionExpiredException

@@ -4,11 +4,6 @@ from unittest.mock import MagicMock
 from unittest.mock import patch
 
 import pytest
-from homeassistant import config_entries
-from homeassistant import setup
-from homeassistant.core import HomeAssistant
-from pytest_homeassistant_custom_component.common import MockConfigEntry
-
 from custom_components.generac.auth import DPoPKey
 from custom_components.generac.auth import InvalidCredentialsError
 from custom_components.generac.const import CONF_DPOP_PEM
@@ -16,6 +11,10 @@ from custom_components.generac.const import CONF_PASSWORD
 from custom_components.generac.const import CONF_REFRESH_TOKEN
 from custom_components.generac.const import CONF_USERNAME
 from custom_components.generac.const import DOMAIN
+from homeassistant import config_entries
+from homeassistant import setup
+from homeassistant.core import HomeAssistant
+from pytest_homeassistant_custom_component.common import MockConfigEntry
 
 
 def _mock_auth(refresh_token: str = "rt-abc", email: str = "user@example.com"):
