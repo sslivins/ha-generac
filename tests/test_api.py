@@ -170,20 +170,20 @@ async def test_get_device_data_no_apparatuses(client, mock_session):
 
 
 async def test_get_device_data_apparatus_none(client, mock_session):
-    """204-style None list returns None."""
+    """Decode failure on /Apparatus/list surfaces as IOError (poll failure)."""
     mock_session.get.return_value = _acm(AsyncMock(status=204))
-    result = await client.get_device_data()
-    assert result is None
+    with pytest.raises(IOError, match="Failed to decode /Apparatus/list response"):
+        await client.get_device_data()
 
 
 async def test_get_device_data_apparatus_not_a_list(client, mock_session):
-    """Unexpected dict instead of list -> empty dict."""
+    """Unexpected dict instead of list surfaces as IOError (poll failure)."""
     resp = AsyncMock(status=200)
     resp.headers = {"Content-Type": "application/json"}
     resp.json = AsyncMock(return_value={"key": "value"})
     mock_session.get.return_value = _acm(resp)
-    result = await client.get_device_data()
-    assert result == {}
+    with pytest.raises(IOError, match="Expected list from /Apparatus/list"):
+        await client.get_device_data()
 
 
 async def test_get_device_data_no_detail(client, mock_session):

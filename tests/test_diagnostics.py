@@ -1,5 +1,4 @@
 """Test the Generac diagnostics."""
-
 from unittest.mock import MagicMock
 
 from custom_components.generac.diagnostics import async_get_config_entry_diagnostics

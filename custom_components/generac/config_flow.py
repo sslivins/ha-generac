@@ -11,14 +11,14 @@ coordinator raises ConfigEntryAuthFailed and HA invokes
 async_step_reauth here. We collect a fresh password (email is locked to
 the entry's unique_id) and overwrite the credentials in place.
 """
-
 import logging
 
 import voluptuous as vol
 from homeassistant import config_entries
 from homeassistant.core import callback
 
-from .auth import GeneracAuth, InvalidCredentialsError
+from .auth import GeneracAuth
+from .auth import InvalidCredentialsError
 from .const import CONF_DPOP_PEM
 from .const import CONF_OPTIONS
 from .const import CONF_PASSWORD
