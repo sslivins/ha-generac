@@ -26,7 +26,11 @@ ALLOWED_DEVICES = [DEVICE_TYPE_GENERATOR, DEVICE_TYPE_PROPANE_MONITOR]
 
 # Defaults
 DEFAULT_NAME = DOMAIN
-DEFAULT_SCAN_INTERVAL = 120
+# 900 s = 15 min. Generac's cloud doesn't push very often (~minutes
+# between updates) and the API is rate-limited per-account, so polling
+# faster than this provides little benefit and risks hitting their
+# throttles.
+DEFAULT_SCAN_INTERVAL = 900
 
 # Platforms
 BINARY_SENSOR = "binary_sensor"
@@ -39,7 +43,11 @@ PLATFORMS = [BINARY_SENSOR, SENSOR, WEATHER, IMAGE]
 CONF_ENABLED = "enabled"
 CONF_USERNAME = "username"
 CONF_PASSWORD = "password"
-CONF_SESSION_COOKIE = "session_cookie"
+# Credentials: refresh token + DPoP private key (stored as PKCS8 PEM).
+# These two values together are the credential — losing either invalidates
+# the entry and forces reauth.
+CONF_REFRESH_TOKEN = "refresh_token"
+CONF_DPOP_PEM = "dpop_pem"
 CONF_SCAN_INTERVAL = "scan_interval"
 
 # Options
@@ -62,5 +70,4 @@ If you have any issues with this you need to open an issue here:
 """
 
 
-API_BASE = "https://app.mobilelinkgen.com/api"
-LOGIN_BASE = "https://generacconnectivity.b2clogin.com/generacconnectivity.onmicrosoft.com/B2C_1A_MobileLink_SignIn"
+API_BASE = "https://app.mobilelinkgen.com/api/v5"
