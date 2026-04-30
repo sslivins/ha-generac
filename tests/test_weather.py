@@ -1,4 +1,5 @@
 """Test the Generac weather platform."""
+
 from unittest.mock import MagicMock
 
 from custom_components.generac.models import Apparatus

@@ -16,7 +16,6 @@ from .const import DEFAULT_SCAN_INTERVAL
 from .const import DOMAIN
 from .models import Item
 
-
 _LOGGER: logging.Logger = logging.getLogger(__package__)
 
 
@@ -42,9 +41,7 @@ class GeneracDataUpdateCoordinator(DataUpdateCoordinator[dict[str, Item]]):
             _LOGGER.info("Polling Generac cloud for device data")
             items = await self.api.async_get_data()
             self.is_online = items is not None
-            _LOGGER.info(
-                "Generac poll OK: %d device(s)", len(items) if items else 0
-            )
+            _LOGGER.info("Generac poll OK: %d device(s)", len(items) if items else 0)
             return items
         except (InvalidCredentialsException, InvalidGrantError) as ex:
             # Refresh token / login no longer valid — trigger HA reauth flow.

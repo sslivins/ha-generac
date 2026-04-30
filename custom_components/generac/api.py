@@ -8,6 +8,7 @@ API versioning: `/api/v1`, `/api/v2`, and `/api/v5` were all observed
 returning identical payloads for the endpoints we use. The iOS app uses
 `/api/v5`; we follow suit for futureproofing.
 """
+
 import json
 import logging
 
@@ -122,9 +123,7 @@ class GeneracApiClient:
                     return None
 
                 if response.status == 401:
-                    raise SessionExpiredException(
-                        f"API returned 401 for {endpoint}"
-                    )
+                    raise SessionExpiredException(f"API returned 401 for {endpoint}")
 
                 if response.status != 200:
                     body = ""
@@ -143,6 +142,4 @@ class GeneracApiClient:
         except SessionExpiredException:
             raise
         except Exception as ex:
-            raise IOError(
-                f"GET {url} failed: {type(ex).__name__}: {ex}"
-            ) from ex
+            raise IOError(f"GET {url} failed: {type(ex).__name__}: {ex}") from ex

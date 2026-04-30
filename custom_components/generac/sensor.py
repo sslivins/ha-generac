@@ -1,4 +1,5 @@
 """Sensor platform for generac."""
+
 import logging
 from datetime import datetime
 from typing import Type

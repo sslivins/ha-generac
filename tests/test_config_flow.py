@@ -1,4 +1,5 @@
 """Test the Generac config flow."""
+
 from unittest.mock import AsyncMock
 from unittest.mock import MagicMock
 from unittest.mock import patch

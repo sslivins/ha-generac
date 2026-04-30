@@ -4,6 +4,7 @@ Custom integration to integrate generac with Home Assistant.
 For more details about this integration, please refer to
 https://github.com/binarydev/ha-generac
 """
+
 import logging
 
 from homeassistant.config_entries import ConfigEntry
@@ -44,9 +45,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry):
 
     session = await async_client_session(hass)
     try:
-        auth = GeneracAuth.from_storage(
-            session, refresh_token, pem_str, email=email
-        )
+        auth = GeneracAuth.from_storage(session, refresh_token, pem_str, email=email)
     except Exception as ex:
         _LOGGER.error("Failed to load stored credentials: %s", ex)
         raise ConfigEntryAuthFailed("Stored credentials are unreadable") from ex

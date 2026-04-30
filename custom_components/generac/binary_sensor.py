@@ -1,4 +1,5 @@
 """Binary sensor platform for generac."""
+
 from typing import Type
 
 from homeassistant.components.binary_sensor import BinarySensorDeviceClass

@@ -1,4 +1,5 @@
 """Diagnostics support for Generac."""
+
 from __future__ import annotations
 
 import ipaddress

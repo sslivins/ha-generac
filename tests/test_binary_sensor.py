@@ -1,4 +1,5 @@
 """Test the Generac binary sensor platform."""
+
 from unittest.mock import MagicMock
 
 from custom_components.generac.binary_sensor import GeneracConnectedSensor

@@ -1,4 +1,5 @@
 """Tests for Generac API Client."""
+
 import asyncio
 import json
 from unittest.mock import AsyncMock
@@ -14,11 +15,27 @@ from custom_components.generac.const import API_BASE
 from custom_components.generac.const import DEVICE_TYPE_UNKNOWN
 
 
+def _acm(response):
+    """Wrap a mock response so it works with `async with session.get(...)`.
+
+    aiohttp's `ClientSession.get()` is a regular function that returns an
+    object supporting the async context manager protocol, NOT a coroutine.
+    Using `AsyncMock()` for `session.get` would make `.get(...)` return a
+    coroutine, which breaks `async with`. Instead, `session.get` is a plain
+    `MagicMock` whose return value is wrapped here as an async-cm yielding
+    `response` from `__aenter__`.
+    """
+    cm = MagicMock()
+    cm.__aenter__ = AsyncMock(return_value=response)
+    cm.__aexit__ = AsyncMock(return_value=None)
+    return cm
+
+
 @pytest.fixture
 def mock_session():
     """Fixture for aiohttp ClientSession."""
     session = MagicMock()
-    session.get = AsyncMock()
+    session.get = MagicMock()
     return session
 
 
@@ -48,7 +65,7 @@ async def test_get_endpoint_uses_bearer_and_v5_base(client, mock_session, mock_a
     response = AsyncMock(status=200)
     response.headers = {"Content-Type": "application/json"}
     response.json = AsyncMock(return_value={"key": "value"})
-    mock_session.get.return_value = response
+    mock_session.get.return_value = _acm(response)
 
     result = await client.get_endpoint("/test")
     assert result == {"key": "value"}
@@ -62,21 +79,21 @@ async def test_get_endpoint_uses_bearer_and_v5_base(client, mock_session, mock_a
 
 async def test_get_endpoint_no_content(client, mock_session):
     """204 No Content returns None."""
-    mock_session.get.return_value = AsyncMock(status=204)
+    mock_session.get.return_value = _acm(AsyncMock(status=204))
     result = await client.get_endpoint("/test")
     assert result is None
 
 
 async def test_get_endpoint_session_expired_401(client, mock_session):
     """401 from API raises SessionExpiredException."""
-    mock_session.get.return_value = AsyncMock(status=401)
+    mock_session.get.return_value = _acm(AsyncMock(status=401))
     with pytest.raises(SessionExpiredException):
         await client.get_endpoint("/test")
 
 
 async def test_get_endpoint_server_error(client, mock_session):
     """Non-2xx non-204 non-401 still raises SessionExpiredException."""
-    mock_session.get.return_value = AsyncMock(status=500)
+    mock_session.get.return_value = _acm(AsyncMock(status=500))
     with pytest.raises(SessionExpiredException):
         await client.get_endpoint("/test")
 
@@ -93,7 +110,7 @@ async def test_get_endpoint_json_decode_error(client, mock_session):
     response = AsyncMock(status=200)
     response.headers = {"Content-Type": "application/json"}
     response.json = AsyncMock(side_effect=json.JSONDecodeError("msg", "doc", 0))
-    mock_session.get.return_value = response
+    mock_session.get.return_value = _acm(response)
     with pytest.raises(IOError):
         await client.get_endpoint("/test")
 
@@ -132,7 +149,7 @@ async def test_get_device_data_success(client, mock_session):
     detail_resp.headers = {"Content-Type": "application/json"}
     detail_resp.json = AsyncMock(return_value=apparatus_detail)
 
-    mock_session.get.side_effect = [list_resp, detail_resp]
+    mock_session.get.side_effect = [_acm(list_resp), _acm(detail_resp)]
 
     result = await client.get_device_data()
 
@@ -147,14 +164,14 @@ async def test_get_device_data_no_apparatuses(client, mock_session):
     resp = AsyncMock(status=200)
     resp.headers = {"Content-Type": "application/json"}
     resp.json = AsyncMock(return_value=[])
-    mock_session.get.return_value = resp
+    mock_session.get.return_value = _acm(resp)
     result = await client.get_device_data()
     assert result == {}
 
 
 async def test_get_device_data_apparatus_none(client, mock_session):
     """204-style None list returns None."""
-    mock_session.get.return_value = AsyncMock(status=204)
+    mock_session.get.return_value = _acm(AsyncMock(status=204))
     result = await client.get_device_data()
     assert result is None
 
@@ -164,7 +181,7 @@ async def test_get_device_data_apparatus_not_a_list(client, mock_session):
     resp = AsyncMock(status=200)
     resp.headers = {"Content-Type": "application/json"}
     resp.json = AsyncMock(return_value={"key": "value"})
-    mock_session.get.return_value = resp
+    mock_session.get.return_value = _acm(resp)
     result = await client.get_device_data()
     assert result == {}
 
@@ -178,6 +195,6 @@ async def test_get_device_data_no_detail(client, mock_session):
     list_resp.headers = {"Content-Type": "application/json"}
     list_resp.json = AsyncMock(return_value=apparatus_list)
 
-    mock_session.get.side_effect = [list_resp, AsyncMock(status=204)]
+    mock_session.get.side_effect = [_acm(list_resp), _acm(AsyncMock(status=204))]
     result = await client.get_device_data()
     assert result == {}

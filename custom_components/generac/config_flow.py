@@ -11,6 +11,7 @@ coordinator raises ConfigEntryAuthFailed and HA invokes
 async_step_reauth here. We collect a fresh password (email is locked to
 the entry's unique_id) and overwrite the credentials in place.
 """
+
 import logging
 
 import voluptuous as vol
@@ -39,7 +40,9 @@ class GeneracFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
     def __init__(self):
         self._reauth_entry: config_entries.ConfigEntry | None = None
 
-    async def _try_login(self, email: str, password: str) -> tuple[dict | None, str | None]:
+    async def _try_login(
+        self, email: str, password: str
+    ) -> tuple[dict | None, str | None]:
         """Run the full login flow. Returns (entry_data, error_key)."""
         try:
             session = await async_client_session(self.hass)

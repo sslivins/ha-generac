@@ -16,6 +16,7 @@ Refresh tokens for this client are NOT rotated by Auth0 (verified
 empirically with multiple successive refreshes). We never need to
 rewrite the ConfigEntry on a successful refresh.
 """
+
 from __future__ import annotations
 
 import asyncio
@@ -261,12 +262,8 @@ async def _post_login_form(
                     s in code.lower()
                     for s in ("password", "credential", "user", "lock", "blocked")
                 ):
-                    raise InvalidCredentialsError(
-                        f"login rejected ({code})"
-                    )
-                raise RuntimeError(
-                    f"POST {url} -> {resp.status}: {code}"
-                )
+                    raise InvalidCredentialsError(f"login rejected ({code})")
+                raise RuntimeError(f"POST {url} -> {resp.status}: {code}")
             raise RuntimeError(f"POST {url} -> {resp.status}")
         return resp.headers["Location"]
 

@@ -1,4 +1,5 @@
 """Test the Generac data update coordinator."""
+
 from unittest.mock import AsyncMock
 from unittest.mock import MagicMock
 

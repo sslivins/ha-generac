@@ -1,4 +1,5 @@
 """Test the Generac entity."""
+
 from unittest.mock import MagicMock
 
 from custom_components.generac.entity import GeneracEntity

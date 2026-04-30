@@ -1,4 +1,5 @@
 """Global fixtures for generac integration."""
+
 from unittest.mock import patch
 
 import pytest
